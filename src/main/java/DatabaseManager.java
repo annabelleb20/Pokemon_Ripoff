@@ -1,6 +1,4 @@
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseManager {
     public static final String DB_URL = "jdbc:sqlite:app.db";
@@ -21,7 +19,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Gets the instance of DatabaseManager
+     * gets the instance of DatabaseManager
      * @return DatabaseManager instance
      */
     public static DatabaseManager getInstance(){
@@ -32,19 +30,52 @@ public class DatabaseManager {
     }
 
     /**
-     * Makes the Database tables .
+     * Creates the tables - should be mildly self-explanatory (I hope)
      */
     private void createTables(){
         String sql = """
                 CREATE TABLE IF NOT EXISTS user (
-                    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                    userId      INTEGER PRIMARY KEY AUTOINCREMENT,
                     name    TEXT    NOT NULL,
                     pass    TEXT    NOT NULL,
                     isAdmin INTEGER NOT NULL DEFAULT 0
                 )
                 """;
+        String sql2 = """
+                CREATE TABLE IF NOT EXISTS teams (
+                    teamId      INTEGER PRIMARY KEY AUTOINCREMENT,
+                    userId      INTEGER,
+                    teamName    TEXT    NOT NULL,
+                    exportCode  TEXT    NOT NULL,
+                    FOREIGN KEY (userId) REFERENCES user(userId)
+                )
+                """;
+        String sql3 = """
+                CREATE TABLE IF NOT EXISTS pokemon (
+                    pokemonId   INTEGER PRIMARY KEY,
+                    pName       TEXT    NOT NULL,
+                    type        TEXT    NOT NULL,
+                    attack      INTEGER,
+                    spAttack    INTEGER,
+                    defence     INTEGER,
+                    spDefence   INTEGER
+                )
+                """;
+        String sql4 = """
+                CREATE TABLE IF NOT EXISTS teamSlots (
+                    slotId  INTEGER PRIMARY KEY,
+                    teamId  INTEGER,
+                    pokemonId   INTEGER,
+                    slotNum INTEGER,
+                    FOREIGN KEY (teamId) REFERENCES teams(teamId),
+                    FOREIGN KEY (pokemonId) REFERENCES pokemon(pokemonId)
+                )
+                """;
         try(Statement stmt = connection.createStatement()){
             stmt.execute(sql);
+            stmt.execute(sql2);
+            stmt.execute(sql3);
+            stmt.execute(sql4);
         } catch (SQLException e) {
             System.err.println("CreateTables failed: " + e.getMessage());
         }
@@ -55,7 +86,7 @@ public class DatabaseManager {
      * @param name - username (string)
      * @param pass - password (string)
      */
-    public void insertData(String name, String pass){
+    public void newUser(String name, String pass){
         String sql = "INSERT INTO user (name,pass) VALUES (?,?)";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
             pstmt.setString(1, name);
@@ -67,14 +98,12 @@ public class DatabaseManager {
     }
 
     /**
-     * Ok there is prolly a way better way to do this but this SHOULD check if a user is valid.
-     * Also checks if user is admin . Cuz that's important
+     * SHOULD check to see if a username/password is valid...
      * @param username - username (string)
      * @param password - password (string)
-     * @return - int (0 if not valid, 1 if valid, 2 if admin)
+     * @return - user ID if valid (-1 if not)
      */
-    public int validUser(String username, String password){
-        List<String> users = new ArrayList<>();
+    public int readUser(String username, String password){
         String sql = "SELECT * FROM user WHERE name = ? AND pass = ?";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
             pstmt.setString(1, username);
@@ -83,37 +112,55 @@ public class DatabaseManager {
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()){
-                int isAdmin = rs.getInt("isAdmin");
-                if(isAdmin == 1){
-                    return 2;
-                } else{
-                    return 1;
-                }
+                return rs.getInt("userId");
             } else{
-                return 0;
+                return -1;
             }
         } catch (SQLException e) {
             System.err.println("GetUsers Failed : " + e.getMessage());
-            return 0;
+            return -1;
         }
     }
 
-    /*
-    At some point we need an update user method for the CRUD stuff (update username/password thing?)
+    /**
+     * Updates username
+     * @param newUser - new username (string)
+     * @param id - user ID of user being changed (int)
      */
+    public void updateUsername(String newUser, int id){
+        String sql = "UPDATE user SET name = ? WHERE userId = ?";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setString(1, newUser);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("updateUsername failed: " + e.getMessage());
+        }
+    }
+    /**
+     * Updates password
+     * @param newPass - new password (string)
+     * @param id - user ID of pass being changed (int)
+     */
+    public void updatePassword(String newPass, int id){
+        String sql = "UPDATE user SET pass = ? WHERE userId = ?";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setString(1, newPass);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("updateUsername failed: " + e.getMessage());
+        }
+    }
 
     /**
-     * Delete user method
-     * Actually now that I think about it, I think a read method that returns the ID would be more useful.
-     * Especially for something like this.
-     * I'll deal w it later I'm tired...
-     * (If I change any methods here I'll deal w fixing any issues that use any methods here)
-     * @param username - username (String)
+     * Gets user ID and deletes the user idk y'all are adults you'll figure it out
+     * @param id - user ID
      */
-    public void deleteUser(String username){
-        String sql = "DELETE FROM user WHERE name = ?";
+    public void deleteUser(int id){
+        String sql = "DELETE FROM user WHERE userId = ?";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            pstmt.setString(1, username);
+            pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("deleteUser failed: " + e.getMessage());
