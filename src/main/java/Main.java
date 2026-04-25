@@ -7,4 +7,9 @@ public class Main extends Application  {
         stage.setTitle("Pokemon RoSHAMbrawl");
         stage.show();
     }
+
+    @Override
+    public void stop(){
+        DatabaseManager.getInstance().close();
+    }
 }

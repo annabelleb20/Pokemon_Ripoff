@@ -1,4 +1,6 @@
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class SceneFactory {
@@ -9,6 +11,12 @@ public class SceneFactory {
     }
 
     public static Scene buildMainStage(Stage stage){
-        //return scene; make a scene
+        /*
+        StackPane root = new StackPane();
+        root.getChildren().add(new Label("Hello, JavaFX!"));
+
+        Scene scene = new Scene(root, 400, 300);
+        return scene;
+         */
     }
 }
