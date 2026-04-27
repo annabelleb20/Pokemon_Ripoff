@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  *
  */
 public class PokemonAPIConsume {
-     public static String PokemonAPIParse(int Poke_id){
+     public static String APIPull(int Poke_id){
         // 1. Create the HttpClient
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(15))
