@@ -1,0 +1,20 @@
+public enum Poke_Type {
+    NORMAL,
+    WATER,
+    GRASS,
+    FIRE,
+    ELECTRIC,
+    ICE,
+    FIGHTING,
+    POISON,
+    GROUND,
+    FLYING,
+    PSYCHIC,
+    BUG,
+    ROCK,
+    GHOST,
+    DRAGON,
+    DARK,
+    STEEL,
+    FAIRY
+}
