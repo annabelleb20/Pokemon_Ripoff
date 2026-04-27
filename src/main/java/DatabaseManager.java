@@ -20,6 +20,8 @@ public class DatabaseManager {
             connection.createStatement().execute("PRAGMA foreign_keys = ON");
             System.out.println("Database connected.");
             createTables();
+            seedData();
+
         } catch (SQLException e) {
             System.err.println("Database connection failed :(" + e.getMessage());
         }
@@ -538,5 +540,36 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
         instance = null;
+    }
+
+    public Connection getConnection(){
+        return connection;
+    }
+
+    private void seedData() {
+        try (Statement stmt = connection.createStatement()) {
+
+            stmt.executeUpdate("INSERT OR IGNORE INTO pokemon (pokemonId, pName, type, attack, spAttack, defence, spDefence) VALUES (1, 'Pikachu', 'ELECTRIC', 55, 50, 40, 50)");
+            stmt.executeUpdate("INSERT OR IGNORE INTO pokemon (pokemonId, pName, type, attack, spAttack, defence, spDefence) VALUES (2, 'Charizard', 'FIRE', 84, 109, 78, 85)");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertPokemon(int id, String name, String type, int attack, int spAttack, int defense, int spDefense) {
+        String sql = "INSERT INTO pokemon VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, name);
+            pstmt.setString(3, type);
+            pstmt.setInt(4, attack);
+            pstmt.setInt(5, spAttack);
+            pstmt.setInt(6, defense);
+            pstmt.setInt(7, spDefense);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

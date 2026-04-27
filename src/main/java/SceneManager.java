@@ -21,4 +21,18 @@ public class SceneManager {
         stage.setScene(scene);
     }
 
+    //creates the scene manager itself and gives it a window
+    public static void init(Stage stage){
+        if (instance == null){
+            instance = new SceneManager(stage);
+        }
+    }
+
+    public static SceneManager getInstance(){
+        if (instance == null){
+            throw new IllegalStateException("SceneManager not initialized.");
+        }
+        return instance;
+    }
+
 }
