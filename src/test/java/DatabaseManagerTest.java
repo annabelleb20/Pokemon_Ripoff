@@ -36,5 +36,6 @@ public class DatabaseManagerTest {
 
         db.deleteTeam(db.getTeamId(userId));
         assertEquals(-1, db.getTeamId(userId));
+        db.deleteUser(userId);
     }
 }
