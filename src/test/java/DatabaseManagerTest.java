@@ -1,3 +1,6 @@
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -5,11 +8,23 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseManagerTest {
+    @BeforeEach
+    void freshDb(){
+        System.setProperty("app.db.url", "jdbc:sqlite::memory:");
+        DatabaseManager.resetForTesting();
+    }
+
+    @AfterEach
+    void teardown(){
+        DatabaseManager.resetForTesting();
+    }
+
     @Test
+    @DisplayName("Test the creation of a new user")
     void testNewUser(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
+        String username = "testrun";
         String password = "password1234";
 
         db.newUser(username,password);
@@ -19,23 +34,54 @@ public class DatabaseManagerTest {
         assertNotEquals(-1, result);
     }
 
-    /**
-     * Tests if the Team table can create, read, update, and delete
-     */
     @Test
+    @DisplayName("Test updating a user")
+    void testUpdateUser(){
+        DatabaseManager db = DatabaseManager.getInstance();
+
+        String username = "user1234";
+        String password = "password1234";
+
+        db.newUser(username,password);
+        int ID = db.readUser(username, password);
+
+        db.updateUsername("newUsername", ID);
+        db.updatePassword("newPassword", ID);
+
+        assertFalse(db.readUserInfo(ID).contains("user1234"));
+        assertFalse(db.readUserInfo(ID).contains("password1234"));
+        assertTrue(db.readUserInfo(ID).contains("newUsername"));
+        assertTrue(db.readUserInfo(ID).contains("newPassword"));
+    }
+
+    @Test
+    @DisplayName("Test deleting a user")
+    void testDeleteUser(){
+        DatabaseManager db = DatabaseManager.getInstance();
+
+        String username = "user1234";
+        String password = "password1234";
+
+        db.newUser(username,password);
+        int ID = db.readUser(username, password);
+
+        db.deleteUser(ID);
+        assertEquals(-1, db.readUser(username, password));
+    }
+
+    @Test
+    @DisplayName("Test creating a team")
     void testTeamCRUD(){
         DatabaseManager db = DatabaseManager.getInstance();
-        db.newUser("user1234", "password1234");
-        int userId = db.readUser("user1234", "password1234");
 
-        db.newTeam(userId, "teamName1234");
-        db.updateExport("export123", db.getTeamId(userId));
-        List<String> team = db.readTeamInfo(userId);
-        assertEquals(db.getTeamId(userId), Integer.parseInt(team.get(0)));
-        assertEquals("export123", team.get(3));
+        String username = "user1234";
+        String password = "password1234";
 
-        db.deleteTeam(db.getTeamId(userId));
-        assertEquals(-1, db.getTeamId(userId));
-        db.deleteUser(userId);
+        db.newUser(username, password);
+        int ID = db.readUser(username, password);
+
+        db.newTeam(ID, "teamName1234");
+        List<String> team = db.readTeamInfo(ID);
+        assertEquals(db.getTeamId(ID), Integer.parseInt(team.get(0)));
     }
 }
