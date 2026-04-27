@@ -20,7 +20,7 @@ public class DatabaseManagerTest {
     }
 
     /**
-     * Tests if Team table can create, read, update, and delete
+     * Tests if the Team table can create, read, update, and delete
      */
     @Test
     void testTeamCRUD(){
