@@ -1,3 +1,4 @@
 public enum SceneType {
-    MAIN
+    MAIN,
+    TABLE_VIEW
 }
