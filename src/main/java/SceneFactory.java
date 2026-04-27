@@ -11,12 +11,10 @@ public class SceneFactory {
     }
 
     public static Scene buildMainStage(Stage stage){
-        /*
         StackPane root = new StackPane();
-        root.getChildren().add(new Label("Hello, JavaFX!"));
+        root.getChildren().add(new Label("Starter Screen"));
 
-        Scene scene = new Scene(root, 400, 300);
-        return scene;
-         */
+        return new Scene(root, 400, 300);
+
     }
 }
