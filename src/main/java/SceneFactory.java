@@ -1,13 +1,9 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,9 +17,16 @@ public class SceneFactory {
         return switch(type){
             case MAIN -> buildMainStage(stage);
             case TABLE_VIEW -> buildTableViewScene(stage);
+            case LOGIN -> buildLoginScene(stage);
+//            case CREATION -> buildCreationScene(stage);
         };
     }
 
+    /**
+     *
+     * @param stage
+     * @return Scene
+     */
     public static Scene buildMainStage(Stage stage){
         VBox root = new VBox();
         Label title = new Label("Welcome to RoSHAMbrawl");
@@ -31,13 +34,20 @@ public class SceneFactory {
         Button loginButton = new Button("Login");
         Button createButton = new Button("Create account");
 
-        Button tableButton = new Button("Open TableView");
-
-        tableButton.setOnAction(e -> {
-            SceneManager.getInstance().navigateTo(SceneType.TABLE_VIEW);
+        //login button
+        loginButton.setOnAction(e-> {
+            SceneManager.getInstance().navigateTo(SceneType.LOGIN);
         });
 
-        root.getChildren().addAll(title,loginButton,createButton, tableButton);
+//commented this out so it just looks a lil more neat on the starter screen.
+// we'll add it back when we get the login and the account creation working.
+//        Button tableButton = new Button("Open TableView");
+
+//        tableButton.setOnAction(e -> {
+//            SceneManager.getInstance().navigateTo(SceneType.TABLE_VIEW);
+//        });
+
+        root.getChildren().addAll(title,loginButton,createButton/*, tableButton*/);
 
         root.setAlignment(Pos.CENTER);
         root.setSpacing(15);
@@ -45,6 +55,28 @@ public class SceneFactory {
 
         return new Scene(root, 400, 300);
     }
+
+    public static Scene buildLoginScene(Stage stage){
+        VBox root = new VBox();
+
+        //there's gotta be a better way of doing this
+        Label prompt = new Label("Please enter your username and password");
+        Label username = new Label("Username");
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Please enter your username");
+        Label password = new Label("Password");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Please enter your password");
+        Button login = new Button("Login");
+
+        root.getChildren().addAll(prompt,username,usernameField,password,passwordField,login);
+
+        root.setAlignment(Pos.CENTER);
+        root.setSpacing(10);
+        root.setPadding(new Insets(20));
+        return new Scene(root,400,300);
+    }
+
     public static Scene buildTableViewScene(Stage stage){
 
         VBox root = new VBox();
@@ -76,8 +108,6 @@ public class SceneFactory {
             e.printStackTrace();
         }
 
-
-
         Label title = new Label("Pokemon TableView");
         TableColumn<Pokemon, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("poke_name"));
@@ -93,5 +123,7 @@ public class SceneFactory {
 
         return new Scene(root, 600, 400);
     }
+
+
 }
 
