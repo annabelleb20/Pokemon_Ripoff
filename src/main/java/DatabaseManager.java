@@ -379,7 +379,7 @@ public class DatabaseManager {
      * @param pkName - Pokemon Name (String)
      * @return - PokemonId if valid (-1 if not)
      */
-    public int getTeamId(String pkName){
+    public int getPokemonId(String pkName){
         String sql = "SELECT * FROM pokemon WHERE pName = ?";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
             pstmt.setString(1, pkName);
@@ -387,7 +387,7 @@ public class DatabaseManager {
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()){
-                return rs.getInt("userId");
+                return rs.getInt("pokemonId");
             } else{
                 return -1;
             }
