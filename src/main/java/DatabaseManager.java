@@ -7,7 +7,7 @@ import java.util.List;
  * @since 4/26/2026
  */
 public class DatabaseManager {
-    public static final String DB_URL = "jdbc:sqlite:app.db";
+    public static String DB_URL = System.getProperty("app.db.url", "jdbc:sqlite:app.db");
     private static DatabaseManager instance;
     private Connection connection;
 

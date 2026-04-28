@@ -1,7 +1,4 @@
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -9,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseManagerTest {
     @BeforeEach
-    void freshDb(){
+    void freshDb2(){
         System.setProperty("app.db.url", "jdbc:sqlite::memory:");
         DatabaseManager.resetForTesting();
     }
