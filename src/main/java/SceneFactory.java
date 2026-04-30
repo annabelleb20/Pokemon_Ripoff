@@ -23,23 +23,23 @@ public class SceneFactory {
     }
 
     /**
-     *
+     * this is the first thing you see, and it asks if you want to create an account or login
      * @param stage
      * @return Scene
      */
     public static Scene buildMainStage(Stage stage){
         VBox root = new VBox();
-        Label title = new Label("Welcome to RoSHAMbrawl");
+        Label title = new Label("Welcome to Pokemon RoSHAMbrawl");
 
         Button loginButton = new Button("Login");
         Button createButton = new Button("Create account");
 
         //login button
-        loginButton.setOnAction(e-> {
-            SceneManager.getInstance().navigateTo(SceneType.LOGIN);
-        });
+        loginButton.setOnAction(e->
+                SceneManager.getInstance().navigateTo(SceneType.LOGIN));
 
 //commented this out so it just looks a lil more neat on the starter screen.
+
 // we'll add it back when we get the login and the account creation working.
 //        Button tableButton = new Button("Open TableView");
 
@@ -56,8 +56,16 @@ public class SceneFactory {
         return new Scene(root, 400, 300);
     }
 
+    /**
+     * this is the login screen.
+     * @param stage
+     * @return
+     */
     public static Scene buildLoginScene(Stage stage){
         VBox root = new VBox();
+
+        DatabaseManager db = DatabaseManager.getInstance();
+        db.newUser("test","pass");
 
         //there's gotta be a better way of doing this
         Label prompt = new Label("Please enter your username and password");
@@ -68,6 +76,21 @@ public class SceneFactory {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Please enter your password");
         Button login = new Button("Login");
+
+        //login check
+        login.setOnAction(e-> {
+            int userid = -1;
+                userid = db.readUser(usernameField.getText(),passwordField.getText());
+                if (userid==-1){
+                    prompt.setText("Sorry, your credentials are wrong. Please try again");
+                }else {
+                    prompt.setText("login successful");
+                    login.setText("Continue");
+                }
+                }
+                );
+//        login.setOnAction(e-> );
+        //TODO: lead to the next scene
 
         root.getChildren().addAll(prompt,username,usernameField,password,passwordField,login);
 
