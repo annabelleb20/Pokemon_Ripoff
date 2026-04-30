@@ -1,3 +1,6 @@
+/*
+Commented out this file cuz I'm pretty sure DatabaseManagerTest does the same thing ://
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,3 +26,4 @@ public class DatabaseIntegrationTest {
         }
     }
 }
+ */

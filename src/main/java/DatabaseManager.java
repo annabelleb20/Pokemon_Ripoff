@@ -7,7 +7,7 @@ import java.util.List;
  * @since 4/26/2026
  */
 public class DatabaseManager {
-    public static final String DB_URL = "jdbc:sqlite:app.db";
+    public static String DB_URL = System.getProperty("app.db.url", "jdbc:sqlite:app.db");
     private static DatabaseManager instance;
     private Connection connection;
 
@@ -20,7 +20,7 @@ public class DatabaseManager {
             connection.createStatement().execute("PRAGMA foreign_keys = ON");
             System.out.println("Database connected.");
             createTables();
-            seedData();
+            //seedData();
 
         } catch (SQLException e) {
             System.err.println("Database connection failed :(" + e.getMessage());
@@ -110,7 +110,7 @@ public class DatabaseManager {
     }
 
     /**
-     * USER - Read
+     * USER - Read 1
      * SHOULD check to see if a username/password is valid...
      * @param username - username (string)
      * @param password - password (string)
@@ -133,6 +133,31 @@ public class DatabaseManager {
             System.err.println("GetUsers Failed : " + e.getMessage());
             return -1;
         }
+    }
+    /**
+     * USER - Read 2
+     * SHOULD check to see if a username/password is valid...
+     * @param userId - user ID (int)
+     * @return - List<String> with user data in (hopefully) the order they appear on the table
+     */
+    public List<String> readUserInfo(int userId){
+        List<String> items = new ArrayList<>();
+        String sql = "SELECT * FROM user WHERE userId = ?";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                items.add(String.valueOf(rs.getInt("userId")));
+                items.add(rs.getString("name"));
+                items.add(rs.getString("pass"));
+                items.add(String.valueOf(rs.getInt("isAdmin")));
+            }
+        } catch (SQLException e) {
+            System.err.println("GetUsers Failed : " + e.getMessage());
+        }
+        return items;
     }
 
     /**
@@ -354,7 +379,7 @@ public class DatabaseManager {
      * @param pkName - Pokemon Name (String)
      * @return - PokemonId if valid (-1 if not)
      */
-    public int getTeamId(String pkName){
+    public int getPokemonId(String pkName){
         String sql = "SELECT * FROM pokemon WHERE pName = ?";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
             pstmt.setString(1, pkName);
@@ -362,7 +387,7 @@ public class DatabaseManager {
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()){
-                return rs.getInt("userId");
+                return rs.getInt("pokemonId");
             } else{
                 return -1;
             }
@@ -546,6 +571,8 @@ public class DatabaseManager {
         return connection;
     }
 
+    /*
+    Commented this out cuz idk what seedData is supposed to do
     private void seedData() {
         try (Statement stmt = connection.createStatement()) {
 
@@ -556,7 +583,7 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
-
+    Also I made this method already I think
     public void insertPokemon(int id, String name, String type, int attack, int spAttack, int defense, int spDefense) {
         String sql = "INSERT INTO pokemon VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -571,5 +598,14 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    */
+
+    /**
+     * TEST ONLY
+     */
+    static void resetForTesting(){
+        if (instance != null) instance.close();
+        instance = null;
     }
 }

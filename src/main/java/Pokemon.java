@@ -3,15 +3,24 @@ public class Pokemon {
     //Stats to be collected from data
     int poke_id;
     String poke_name;
-    Poke_Type PrimaryType;
-    Poke_Type SecondaryType;
+    Poke_Type primaryType;
+    Poke_Type secondaryType;
     double baseHp;
     int attack;
     int sp_attack;
     int defense;
     int sp_defense;
-    public Pokemon() {
 
+    public Pokemon() {
+        this.poke_id = poke_id;
+        this.poke_name = poke_name;
+        this.primaryType = primaryType;
+        this.secondaryType = secondaryType;
+        this.baseHp = baseHp;
+        this.attack = attack;
+        this.sp_attack = sp_attack;
+        this.defense = defense;
+        this.sp_defense = sp_defense;
     }
 
     public int getPoke_id() {
@@ -31,19 +40,19 @@ public class Pokemon {
     }
 
     public Poke_Type getPrimaryType() {
-        return PrimaryType;
+        return primaryType;
     }
 
     public void setPrimaryType(Poke_Type primaryType) {
-        PrimaryType = primaryType;
+        this.primaryType = primaryType;
     }
 
     public Poke_Type getSecondaryType() {
-        return SecondaryType;
+        return secondaryType;
     }
 
     public void setSecondaryType(Poke_Type secondaryType) {
-        SecondaryType = secondaryType;
+        this.secondaryType = secondaryType;
     }
 
     public double getBaseHp() {
@@ -84,5 +93,30 @@ public class Pokemon {
 
     public void setSp_defense(int sp_defense) {
         this.sp_defense = sp_defense;
+    }
+
+    @Override
+    public String toString() {
+        String type1String = "null";
+        if (primaryType != null) {
+            type1String = primaryType.name();
+        }
+
+        String type2String = "null";
+        if (secondaryType != null) {
+            type2String = secondaryType.name();
+        }
+
+        return "Pokemon{" +
+                "poke_id=" + poke_id +
+                ", poke_name='" + poke_name + '\'' +
+                ", primaryType=" + type1String +
+                ", secondaryType=" + type2String +
+                ", baseHp=" + baseHp +
+                ", attack=" + attack +
+                ", sp_attack=" + sp_attack +
+                ", defense=" + defense +
+                ", sp_defense=" + sp_defense +
+                '}';
     }
 }
