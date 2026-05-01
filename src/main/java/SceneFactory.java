@@ -18,7 +18,7 @@ public class SceneFactory {
             case MAIN -> buildMainStage(stage);
             case TABLE_VIEW -> buildTableViewScene(stage);
             case LOGIN -> buildLoginScene(stage);
-//            case CREATION -> buildCreationScene(stage);
+            case CREATION -> new CreationController().buildScene();
         };
     }
 
@@ -37,6 +37,9 @@ public class SceneFactory {
         //login button
         loginButton.setOnAction(e->
                 SceneManager.getInstance().navigateTo(SceneType.LOGIN));
+
+        //leads to creationcrontroller
+        createButton.setOnAction(e -> SceneManager.getInstance().navigateTo(SceneType.CREATION));
 
 //commented this out so it just looks a lil more neat on the starter screen.
 
@@ -65,7 +68,6 @@ public class SceneFactory {
         VBox root = new VBox();
 
         DatabaseManager db = DatabaseManager.getInstance();
-        db.newUser("test","pass");
 
         //there's gotta be a better way of doing this
         Label prompt = new Label("Please enter your username and password");
@@ -76,23 +78,31 @@ public class SceneFactory {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Please enter your password");
         Button login = new Button("Login");
+        Button signup = new Button("Sign up");
 
         //login check
         login.setOnAction(e-> {
             int userid = -1;
-                userid = db.readUser(usernameField.getText(),passwordField.getText());
-                if (userid==-1){
-                    prompt.setText("Sorry, your credentials are wrong. Please try again");
-                }else {
-                    prompt.setText("login successful");
-                    login.setText("Continue");
-                }
-                }
-                );
-//        login.setOnAction(e-> );
-        //TODO: lead to the next scene
+            userid = db.readUser(usernameField.getText(), passwordField.getText());
+            if (userid == -1) {
+                prompt.setText("Sorry, your credentials are wrong. Please try again");
+            } else {
+                prompt.setText("login successful");
+                login.setText("Continue");
 
-        root.getChildren().addAll(prompt,username,usernameField,password,passwordField,login);
+                //todo: make this lead to the next scene
+                login.setOnAction(event ->{
+                    prompt.setText("Please enter your username and password");
+                    SceneManager.getInstance().navigateTo(SceneType.MAIN);
+                });
+            }
+        });
+
+
+        signup.setOnAction(e-> SceneManager.getInstance().navigateTo(SceneType.CREATION));
+
+        root.getChildren().addAll(prompt,username,usernameField,password,passwordField,signup,login);
+
 
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
