@@ -19,6 +19,7 @@ public class SceneFactory {
             case TABLE_VIEW -> buildTableViewScene(stage);
             case LOGIN -> buildLoginScene(stage);
             case CREATION -> new CreationController().buildScene();
+            case TEAM_CREATION -> new
         };
     }
 
