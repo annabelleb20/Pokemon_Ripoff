@@ -38,6 +38,37 @@ public class DatabaseManagerTest {
     }
 
     @Test
+    @DisplayName("Test the creation of a new user")
+    void testNewAdmin(){
+        DatabaseManager db = DatabaseManager.getInstance();
+
+        String username = "user1234";
+        String password = "password1234";
+
+        db.newAdmin(username,password);
+
+        int result = db.readUser(username, password);
+
+        assertNotEquals(-1, result);
+    }
+
+    @Test
+    @DisplayName("Test to read admin (literally just wanna see if I'm doing this right)")
+    void testReadAdmin(){
+        DatabaseManager db = DatabaseManager.getInstance();
+
+        db.newUser("notAdmin","fuck off");
+        int userResult=db.readUser("notAdmin","word");
+
+
+        assertFalse(db.isAdmin(userResult));
+        db.newAdmin("isadmin","pass");
+        int adminResult = db.readUser("isadmin","pass");
+        assertTrue(db.isAdmin(adminResult));
+
+    }
+
+    @Test
     @DisplayName("Test reading a user")
     void testReadUser(){
         DatabaseManager db = DatabaseManager.getInstance();

@@ -110,6 +110,46 @@ public class DatabaseManager {
     }
 
     /**
+     * this creates a new admin
+     * @param name
+     * @param pass
+     */
+    public void newAdmin(String name, String pass){
+        String sql = "INSERT INTO user (name,pass,isAdmin) VALUES (?,?,?)";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setString(1, name);
+            pstmt.setString(2, pass);
+            pstmt.setInt(3, 1);
+            pstmt.executeUpdate();
+        } catch(SQLException e){
+            System.err.println("InsertItem Failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * this is a method that checks is the userid is linked to an admin account
+     * @param userId
+     * @return
+     */
+    public boolean isAdmin(int userId) {
+        String sql = "SELECT isAdmin FROM user WHERE userId = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("isAdmin") == 1;
+            }
+        } catch (SQLException e) {
+            System.err.println("isAdmin check failed: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    /**
      * USER - Read 1
      * SHOULD check to see if a username/password is valid...
      * @param username - username (string)
