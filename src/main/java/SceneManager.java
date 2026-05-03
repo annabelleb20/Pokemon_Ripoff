@@ -20,6 +20,11 @@ public class SceneManager {
         stage.setScene(scene);
     }
 
+    /** Always rebuild the scene (use for screens that must show fresh data). */
+    public void navigateFresh(SceneType type) {
+        stage.setScene(SceneFactory.create(type, stage));
+    }
+
     //creates the scene manager itself and gives it a window
     public static void init(Stage stage){
         if (instance == null){
