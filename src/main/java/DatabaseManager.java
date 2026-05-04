@@ -199,6 +199,30 @@ public class DatabaseManager {
         }
         return items;
     }
+    /**
+     * USER - Read 3
+     * Returns all data from user table
+     * @return List<User> of all data from user table
+     */
+    public List<User> getUsers(){
+        List<User> items = new ArrayList<>();
+        String sql = "SELECT * FROM user";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                items.add(new User(
+                        rs.getInt("userId"),
+                        rs.getString("name"),
+                        rs.getString("pass"),
+                        rs.getInt("isAdmin") == 1
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("GetUsers Failed : " + e.getMessage());
+        }
+        return items;
+    }
 
     /**
      * USER - Update 1
