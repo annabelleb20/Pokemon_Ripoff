@@ -13,7 +13,7 @@ import java.net.http.HttpResponse;
  * @since 4/25/26
  *Accesses the Pokemon API and creates a pokemon object, and assigns the needed stat values.
  */
-public class PokemonAPIConsume {
+public class    PokemonAPIConsume {
 
     public static Pokemon APIPull(int Poke_id) {
         Pokemon pokeOut = new Pokemon();
@@ -25,7 +25,7 @@ public class PokemonAPIConsume {
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            //System.out.println(response.body());
+            System.out.println(response.body());
             // 3. Parse JSON
             String jsonStr = response.body();
             JSONObject jsonObj = new JSONObject(jsonStr);
@@ -41,17 +41,27 @@ public class PokemonAPIConsume {
 
             JSONArray types = jsonObj.getJSONArray("types");
             JSONObject type1 = types.getJSONObject(0).getJSONObject("type");
-            JSONObject type2 = types.getJSONObject(1).getJSONObject("type");
+            JSONObject type2;
+            if(types.length()!=1) {
+                type2 = types.getJSONObject(1).getJSONObject("type");
+                pokeOut.setSecondaryType(Poke_Type.valueOf(type2.getString("name").toUpperCase()));
+            } else {
+                pokeOut.setSecondaryType(null);
+            }
+
+            //} else
+            //JSONObject type2 = types.getJSONObject(1).getJSONObject("type");
 
             pokeOut.setPrimaryType(Poke_Type.valueOf(type1.getString("name").toUpperCase()));
-            pokeOut.setSecondaryType(Poke_Type.valueOf(type2.getString("name").toUpperCase()));
+            //
 
-            /*
+
             System.out.println(type1.getString("name"));
-            System.out.println(type2.getString("name"));
+            //System.out.println(type2.getString("name"));
             System.out.println(pokeOut.primaryType.name());
-            System.out.println(pokeOut.secondaryType.name());
-            */
+
+            //System.out.println(pokeOut.secondaryType.name());
+
 
             JSONArray stats = jsonObj.getJSONArray("stats");
             JSONObject hp = stats.getJSONObject(0);
@@ -88,7 +98,7 @@ public class PokemonAPIConsume {
     }
 
     public static void main(String[] args) {
-        Pokemon swampert = APIPull(260);
-        System.out.println(swampert.toString());
+        Pokemon swampert = APIPull(4);
+        //System.out.println(swampert.toString());
     }
 }
