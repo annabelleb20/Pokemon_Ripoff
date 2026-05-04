@@ -276,9 +276,29 @@ public class DatabaseManagerTest {
         db.newTeam(ID, "teamName1234");
         db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
 
-        db.newTeamSlot(1, db.getTeamId(ID), 123, 1);
+        db.newTeamSlot(db.getTeamId(ID), 1, 1);
         assertNotEquals(-1, db.getSlotId(db.getTeamId(ID)));
     }
+
+    @Test
+    @DisplayName("Test new pokemon team slot")
+    void testNewPokemonTeamSlot(){
+        DatabaseManager db = DatabaseManager.getInstance();
+
+        String username = "user1234";
+        String password = "password1234";
+
+        db.newUser(username, password);
+        int ID = db.readUser(username, password);
+
+        db.newTeam(ID, "teamName1234");
+        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
+        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
+
+        db.newTeamSlot(db.getTeamId(ID), 1, 1, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
+        assertEquals(3, db.readSlotInfo(db.getTeamId(ID)).get(2));
+    }
+
 
     @Test
     @DisplayName("Test reading a team slot")
@@ -294,7 +314,7 @@ public class DatabaseManagerTest {
         db.newTeam(ID, "teamName1234");
         db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
 
-        db.newTeamSlot(1, db.getTeamId(ID), 123, 1);
+        db.newTeamSlot(db.getTeamId(ID), 1, 1);
         int slotID = db.getSlotId(db.getTeamId(ID));
         assertNotEquals(-1, slotID);
 
@@ -303,7 +323,7 @@ public class DatabaseManagerTest {
         //Tests if all the info is in the right spots
         assertEquals(slotID, info.get(0));
         assertEquals(db.getTeamId(ID), info.get(1));
-        assertEquals(123, info.get(2));
+        assertEquals(1, info.get(2));
         assertEquals(1, info.get(3));
     }
 
@@ -321,7 +341,7 @@ public class DatabaseManagerTest {
         db.newTeam(ID, "teamName1234");
         db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
 
-        db.newTeamSlot(1, db.getTeamId(ID), 123, 1);
+        db.newTeamSlot(db.getTeamId(ID), 1, 1);
         db.updateTeamSlots("slotId", 2, 1);
 
         assertEquals(2, db.getSlotId(db.getTeamId(ID)));
@@ -341,7 +361,7 @@ public class DatabaseManagerTest {
         db.newTeam(ID, "teamName1234");
         db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
 
-        db.newTeamSlot(1, db.getTeamId(ID), 123, 1);
+        db.newTeamSlot(db.getTeamId(ID), 1, 1);
         db.deleteTeamSlot(db.getSlotId(db.getTeamId(ID)));
 
         assertEquals(-1, db.getSlotId(db.getTeamId(ID)));
