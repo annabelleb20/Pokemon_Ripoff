@@ -61,7 +61,8 @@ public class DatabaseManager {
                 """;
         String sql3 = """
                 CREATE TABLE IF NOT EXISTS pokemon (
-                    pokemonId   INTEGER PRIMARY KEY,
+                    indID       INTEGER PRIMARY KEY AUTOINCREMENT,
+                    pokemonId   INTEGER,
                     pName       TEXT    NOT NULL,
                     type        TEXT    NOT NULL,
                     type2       TEXT    NOT NULL,
@@ -74,12 +75,11 @@ public class DatabaseManager {
                 """;
         String sql4 = """
                 CREATE TABLE IF NOT EXISTS teamSlots (
-                    slotId  INTEGER PRIMARY KEY,
+                    slotId  INTEGER PRIMARY KEY AUTOINCREMENT,
                     teamId  INTEGER,
                     pokemonId   INTEGER,
                     slotNum INTEGER,
-                    FOREIGN KEY (teamId) REFERENCES teams(teamId),
-                    FOREIGN KEY (pokemonId) REFERENCES pokemon(pokemonId)
+                    FOREIGN KEY (teamId) REFERENCES teams(teamId)
                 )
                 """;
         try(Statement stmt = connection.createStatement()){
@@ -381,6 +381,46 @@ public class DatabaseManager {
             System.err.println("InsertItem Failed: " + e.getMessage());
         }
     }
+    /**
+     * Uses Info provided by other createTeamSlot method to make a new pokemon
+     * and return it's individual ID
+     * @param pkId Int
+     * @param pkName String
+     * @param t1 String
+     * @param t2 String
+     * @param hp Double
+     * @param Ak Int
+     * @param spAk Int
+     * @param Df Int
+     * @param spDf Int
+     * @return Int
+     */
+    public int newTeamPokemon(int pkId, String pkName, String t1, String t2, Double hp, int Ak, int spAk, int Df, int spDf){
+        String sql = "INSERT INTO pokemon (pokemonId,pName,type,type2,hp,attack,spAttack,defence,spDefence) VALUES (?,?,?,?,?,?,?,?,?) RETURNING indID";
+        int id = -1;
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setInt(1, pkId);
+            pstmt.setString(2, pkName);
+            pstmt.setString(3, t1);
+            pstmt.setString(4, t2);
+            pstmt.setDouble(5, hp);
+            pstmt.setInt(6, Ak);
+            pstmt.setInt(7, spAk);
+            pstmt.setInt(8, Df);
+            pstmt.setInt(9, spDf);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    id = rs.getInt("indID");
+                }
+            }
+
+            pstmt.executeQuery();
+        } catch(SQLException e){
+            System.err.println("InsertItem Failed: " + e.getMessage());
+        }
+        return id;
+    }
 
     /**
      * POKEMON - Read 1
@@ -492,18 +532,43 @@ public class DatabaseManager {
     /**
      * TEAMSLOTS - Create
      * Under the impression that everything is manual again
-     * @param slotId - slotId (int)
      * @param teamId - teamId (foreign key from team table)
      * @param pkId - pokemonId (foreign key from pokemon table)
      * @param slotNum - slotNum (int)
      */
-    public void newTeamSlot(int slotId, int teamId, int pkId, int slotNum){
-        String sql = "INSERT INTO teamSlots (slotId,teamId,pokemonId,slotNum) VALUES (?,?,?,?)";
+    public void newTeamSlot(int teamId, int pkId, int slotNum){
+        String sql = "INSERT INTO teamSlots (teamId,pokemonId,slotNum) VALUES (?,?,?)";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            pstmt.setInt(1, slotId);
-            pstmt.setInt(2, teamId);
-            pstmt.setInt(3, pkId);
-            pstmt.setInt(4, slotNum);
+            pstmt.setInt(1, teamId);
+            pstmt.setInt(2, pkId);
+            pstmt.setInt(3, slotNum);
+            pstmt.executeUpdate();
+        } catch(SQLException e){
+            System.err.println("InsertItem Failed: " + e.getMessage());
+        }
+    }
+    /**
+     * Takes in Pokemon, creates new pokemon, and adds it's id to the table
+     * @param teamId Int
+     * @param pkId Int
+     * @param slotNum Int
+     * @param pkName String
+     * @param t1 String
+     * @param t2 String
+     * @param hp Double
+     * @param Ak Int
+     * @param spAk Int
+     * @param Df Int
+     * @param spDf Int
+     */
+    public void newTeamSlot(int teamId, int pkId, int slotNum, String pkName, String t1, String t2, Double hp, int Ak, int spAk, int Df, int spDf){
+        int indId = newTeamPokemon(pkId, pkName, t1, t2, hp, Ak, spAk, Df, spDf);
+        System.out.println(indId);
+        String sql = "INSERT INTO teamSlots (teamId,pokemonId,slotNum) VALUES (?,?,?)";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setInt(1, teamId);
+            pstmt.setInt(2, indId);
+            pstmt.setInt(3, slotNum);
             pstmt.executeUpdate();
         } catch(SQLException e){
             System.err.println("InsertItem Failed: " + e.getMessage());
