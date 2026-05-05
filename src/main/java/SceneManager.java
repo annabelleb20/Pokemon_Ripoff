@@ -4,9 +4,8 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class SceneManager {
-
     private static SceneManager instance;
-
+    private int currentUserId = -1;
     private final Stage stage;
     private final Map<SceneType, Scene> cache =
             new EnumMap<>(SceneType.class);
@@ -37,6 +36,19 @@ public class SceneManager {
             throw new IllegalStateException("SceneManager not initialized.");
         }
         return instance;
+    }
+
+//userid methods. you can yell at me about this later but I just wanted to get something.
+    public void setCurrentUserId(int currentUserId) {
+        this.currentUserId = currentUserId;
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void clear() {
+        currentUserId = -1;
     }
 
 }
