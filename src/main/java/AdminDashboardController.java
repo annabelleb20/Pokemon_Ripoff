@@ -6,6 +6,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdminDashboardController {
     DatabaseManager db = DatabaseManager.getInstance();
 
@@ -18,7 +21,7 @@ public class AdminDashboardController {
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         grid.add(title, 3, 0);
 
-        Button editBtn = new Button("Edit Trainers");
+        Button editBtn = new Button("Select a trainer to edit");
         editBtn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         grid.add(editBtn, 3, 1);
 
@@ -51,9 +54,30 @@ public class AdminDashboardController {
         table.setItems(data);
         grid.add(table, 4, 0, 2, 8);
 
+        editBtn.setOnAction(e -> handleEdit(table.getSelectionModel().getSelectedItem(), editBtn));
+        selectBtn.setOnAction(e -> handleSelect(table.getSelectionModel().getSelectedItems(), selectBtn));
+
         logOut.setOnAction(e -> SceneManager.getInstance().navigateTo(SceneType.MAIN));
-        //TODO: MAKE EDITBTN AND SELECTBTN USEABLE
 
         return new Scene(grid, 500, 400);
+    }
+
+    private void handleEdit(User selected, Button btn){
+        if(selected != null){
+            AppData.getInstance().setSelectedUser(selected);
+            SceneManager.getInstance().navigateFresh(SceneType.ADMIN_USER_EDIT);
+        } else{
+            btn.setText("Select a User from the table");
+        }
+    }
+
+    private void handleSelect(ObservableList<User> u, Button btn){
+        if(u == null || u.size() != 2){
+            btn.setText("Select 2 users from the table");
+        } else{
+            List<User> users = new ArrayList<>(u);
+            AppData.getInstance().setDuel(users);
+            SceneManager.getInstance().navigateFresh(SceneType.FIGHT);
+        }
     }
 }
