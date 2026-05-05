@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Annabelle Baltes
+ * @author Annabelle Baltes,
  * @since 4/26/2026
  */
 public class DatabaseManager {
@@ -110,9 +110,10 @@ public class DatabaseManager {
     }
 
     /**
+     * USER/ADMIN - Create 2
      * this creates a new admin
-     * @param name
-     * @param pass
+     * @param name A String
+     * @param pass A String
      */
     public void newAdmin(String name, String pass){
         String sql = "INSERT INTO user (name,pass,isAdmin) VALUES (?,?,?)";
@@ -127,9 +128,10 @@ public class DatabaseManager {
     }
 
     /**
+     * ADMIN - Read
      * this is a method that checks is the userid is linked to an admin account
-     * @param userId
-     * @return
+     * @param userId An int
+     * @return boolean
      */
     public boolean isAdmin(int userId) {
         String sql = "SELECT isAdmin FROM user WHERE userId = ?";
