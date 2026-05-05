@@ -5,9 +5,12 @@ public enum SceneType {
     LOGIN,
     CREATION,
     ADMIN_DASHBOARD,
+    TRAINER,
+    TEAM_BUILD,
+    //BATTLE
     ADMIN_USER_EDIT,
     FIGHT,
-    TRAINER
+    TRAINER,
     //started on this
 
 }

@@ -18,7 +18,7 @@ public class trainerController {
         Button exportTeam = new Button("Export Team");
         Button logOut = new Button("Log out");
 
-//        createEditTeam.setOnAction(e-> ); leads to create team
+        createEditTeam.setOnAction(e-> SceneManager.getInstance().navigateTo(SceneType.TEAM_BUILD));
 
 //        exportTeam.setOnAction(e->);
 

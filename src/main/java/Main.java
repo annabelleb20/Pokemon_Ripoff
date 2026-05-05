@@ -17,4 +17,6 @@ public class Main extends Application  {
     public void stop(){
         DatabaseManager.getInstance().close();
     }
+
+
 }
