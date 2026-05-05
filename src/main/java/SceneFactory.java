@@ -20,6 +20,7 @@ public class SceneFactory {
             case LOGIN -> buildLoginScene(stage);
             case CREATION -> new CreationController().buildScene();
             case ADMIN_DASHBOARD -> new AdminDashboardController().buildScene();
+            case ADMIN_USER_EDIT -> new AdminUserEditController().buildScene();
             case TRAINER -> new trainerController().buildScene();
         };
     }
