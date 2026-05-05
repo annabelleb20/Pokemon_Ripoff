@@ -21,6 +21,8 @@ public class SceneFactory {
             case CREATION -> new CreationController().buildScene();
             case ADMIN_DASHBOARD -> new AdminDashboardController().buildScene();
             case TRAINER -> new trainerController().buildScene();
+            case TEAM_BUILD -> new TeamCreateController().buildScene();
+            //case BATTLE ->
         };
     }
 

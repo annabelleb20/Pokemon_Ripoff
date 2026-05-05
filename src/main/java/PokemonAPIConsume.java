@@ -25,7 +25,7 @@ public class    PokemonAPIConsume {
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
+            //System.out.println(response.body());
             // 3. Parse JSON
             String jsonStr = response.body();
             JSONObject jsonObj = new JSONObject(jsonStr);
@@ -42,7 +42,7 @@ public class    PokemonAPIConsume {
             JSONArray types = jsonObj.getJSONArray("types");
             JSONObject type1 = types.getJSONObject(0).getJSONObject("type");
             JSONObject type2;
-            if(types.length()!=1) {
+            if (types.length() != 1) {
                 type2 = types.getJSONObject(1).getJSONObject("type");
                 pokeOut.setSecondaryType(Poke_Type.valueOf(type2.getString("name").toUpperCase()));
             } else {
@@ -97,8 +97,6 @@ public class    PokemonAPIConsume {
         return null;
     }
 
-    public static void main(String[] args) {
-        Pokemon swampert = APIPull(4);
-        //System.out.println(swampert.toString());
-    }
 }
+
+
