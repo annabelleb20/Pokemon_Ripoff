@@ -6,6 +6,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdminDashboardController {
     DatabaseManager db = DatabaseManager.getInstance();
 
@@ -52,6 +55,7 @@ public class AdminDashboardController {
         grid.add(table, 4, 0, 2, 8);
 
         editBtn.setOnAction(e -> handleEdit(table.getSelectionModel().getSelectedItem(), editBtn));
+        selectBtn.setOnAction(e -> handleSelect(table.getSelectionModel().getSelectedItems(), selectBtn));
 
         logOut.setOnAction(e -> SceneManager.getInstance().navigateTo(SceneType.MAIN));
 
@@ -64,6 +68,16 @@ public class AdminDashboardController {
             SceneManager.getInstance().navigateFresh(SceneType.ADMIN_USER_EDIT);
         } else{
             btn.setText("Select a User from the table");
+        }
+    }
+
+    private void handleSelect(ObservableList<User> u, Button btn){
+        if(u == null || u.size() != 2){
+            btn.setText("Select 2 users from the table");
+        } else{
+            List<User> users = new ArrayList<>(u);
+            AppData.getInstance().setDuel(users);
+            SceneManager.getInstance().navigateFresh(SceneType.FIGHT);
         }
     }
 }
