@@ -3,7 +3,8 @@ public enum SceneType {
     MAIN,
     TABLE_VIEW,
     LOGIN,
-    CREATION
+    CREATION,
+    TRAINER
     //started on this
 
 }
