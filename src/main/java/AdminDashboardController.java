@@ -18,7 +18,7 @@ public class AdminDashboardController {
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         grid.add(title, 3, 0);
 
-        Button editBtn = new Button("Edit Trainers");
+        Button editBtn = new Button("Select a trainer to edit");
         editBtn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         grid.add(editBtn, 3, 1);
 
@@ -51,9 +51,19 @@ public class AdminDashboardController {
         table.setItems(data);
         grid.add(table, 4, 0, 2, 8);
 
+        editBtn.setOnAction(e -> handleEdit(table.getSelectionModel().getSelectedItem(), editBtn));
+
         logOut.setOnAction(e -> SceneManager.getInstance().navigateTo(SceneType.MAIN));
-        //TODO: MAKE EDITBTN AND SELECTBTN USEABLE
 
         return new Scene(grid, 500, 400);
+    }
+
+    private void handleEdit(User selected, Button btn){
+        if(selected != null){
+            AppData.getInstance().setSelectedUser(selected);
+            SceneManager.getInstance().navigateFresh(SceneType.ADMIN_USER_EDIT);
+        } else{
+            btn.setText("Select a User from the table");
+        }
     }
 }
