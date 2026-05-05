@@ -38,7 +38,7 @@ public class SceneManager {
         return instance;
     }
 
-//userid methods. you can yell at me about this later but I just wanted to get something.
+//userid methods. you can yell at me about this later, but I just wanted to get something.
     public void setCurrentUserId(int currentUserId) {
         this.currentUserId = currentUserId;
     }
