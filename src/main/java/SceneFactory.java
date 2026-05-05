@@ -21,6 +21,7 @@ public class SceneFactory {
             case CREATION -> new CreationController().buildScene();
             case ADMIN_DASHBOARD -> new AdminDashboardController().buildScene();
             case ADMIN_USER_EDIT -> new AdminUserEditController().buildScene();
+            case TRAINER -> new trainerController().buildScene();
         };
     }
 
@@ -38,10 +39,10 @@ public class SceneFactory {
 
         //login button
         loginButton.setOnAction(e->
-                SceneManager.getInstance().navigateTo(SceneType.LOGIN));
+                SceneManager.getInstance().navigateFresh(SceneType.LOGIN));
 
         //leads to creationcrontroller
-        createButton.setOnAction(e -> SceneManager.getInstance().navigateTo(SceneType.CREATION));
+        createButton.setOnAction(e -> SceneManager.getInstance().navigateFresh(SceneType.CREATION));
 
 //commented this out so it just looks a lil more neat on the starter screen.
 
@@ -89,11 +90,12 @@ public class SceneFactory {
             if (userid == -1) {
                 prompt.setText("Sorry, your credentials are wrong. Please try again");
             } else {
+                SceneManager.getInstance().setCurrentUserId(userid);
                 if(db.isAdmin(userid)){
                     SceneManager.getInstance().navigateFresh(SceneType.ADMIN_DASHBOARD);
                 }
                 else{
-                    SceneManager.getInstance().navigateTo(SceneType.MAIN);
+                    SceneManager.getInstance().navigateTo(SceneType.TRAINER);
                 }
             }
         });
