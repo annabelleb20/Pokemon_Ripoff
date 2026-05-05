@@ -10,7 +10,6 @@ public class Pokemon {
     int sp_attack;
     int defense;
     int sp_defense;
-
     public Pokemon() {
         this.poke_id = poke_id;
         this.poke_name = poke_name;

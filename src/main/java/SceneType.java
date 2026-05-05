@@ -4,7 +4,7 @@ public enum SceneType {
     TABLE_VIEW,
     LOGIN,
     CREATION,
-    TRAINER
+    ADMIN_DASHBOARD
     //started on this
 
 }

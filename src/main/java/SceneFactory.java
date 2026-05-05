@@ -19,6 +19,7 @@ public class SceneFactory {
             case TABLE_VIEW -> buildTableViewScene(stage);
             case LOGIN -> buildLoginScene(stage);
             case CREATION -> new CreationController().buildScene();
+            case ADMIN_DASHBOARD -> new AdminDashboardController().buildScene();
         };
     }
 
@@ -87,14 +88,12 @@ public class SceneFactory {
             if (userid == -1) {
                 prompt.setText("Sorry, your credentials are wrong. Please try again");
             } else {
-                prompt.setText("login successful");
-                login.setText("Continue");
-
-                //todo: make this lead to the next scene
-                login.setOnAction(event ->{
-                    prompt.setText("Please enter your username and password");
+                if(db.isAdmin(userid)){
+                    SceneManager.getInstance().navigateFresh(SceneType.ADMIN_DASHBOARD);
+                }
+                else{
                     SceneManager.getInstance().navigateTo(SceneType.MAIN);
-                });
+                }
             }
         });
 
