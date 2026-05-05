@@ -14,6 +14,6 @@ import java.sql.*;
 public class TeamCreationScreen {
 
     public Scene buildScene() {
-
+        return null;
     }
 }
