@@ -38,10 +38,10 @@ public class SceneFactory {
 
         //login button
         loginButton.setOnAction(e->
-                SceneManager.getInstance().navigateTo(SceneType.LOGIN));
+                SceneManager.getInstance().navigateFresh(SceneType.LOGIN));
 
         //leads to creationcrontroller
-        createButton.setOnAction(e -> SceneManager.getInstance().navigateTo(SceneType.CREATION));
+        createButton.setOnAction(e -> SceneManager.getInstance().navigateFresh(SceneType.CREATION));
 
 //commented this out so it just looks a lil more neat on the starter screen.
 
@@ -94,7 +94,7 @@ public class SceneFactory {
                     SceneManager.getInstance().navigateFresh(SceneType.ADMIN_DASHBOARD);
                 }
                 else{
-                    SceneManager.getInstance().navigateTo(SceneType.MAIN);
+                    SceneManager.getInstance().navigateTo(SceneType.TRAINER);
                 }
             }
         });
