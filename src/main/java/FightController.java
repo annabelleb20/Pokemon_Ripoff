@@ -54,4 +54,23 @@ public class FightController {
 
         return typeEffectivness.get(attacker.primaryType).get(defender.primaryType);
     }
+
+    public double calculateDamage(Pokemon attacker, Pokemon defender) {
+        double damage;
+
+        if (attacker.sp_attack > attacker.attack) {
+            damage = (double) attacker.sp_attack/defender.sp_defense;
+        } else {
+            damage = (double) attacker.attack/defender.defense;
+        }
+
+        damage = (damage/50) + 2;
+
+        //Same type attack bonus
+        if(attacker.primaryType.equals(defender.primaryType)) {
+            damage = damage * 1.5;
+        }
+
+        return damage * getTypeEffectiveness(attacker, defender);
+    }
 }
