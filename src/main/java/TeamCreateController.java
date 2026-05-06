@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class TeamCreateController {
 
-
     int userId = SceneManager.getInstance().getCurrentUserId();
     DatabaseManager db = DatabaseManager.getInstance();
 
@@ -23,10 +22,10 @@ public class TeamCreateController {
     int slotSelected;
     List<Pokemon> team = new ArrayList<>();
 
-
     void setSlotSelected(int in) {
         slotSelected = in;
     }
+
     public Scene buildScene(){
         VBox root = new VBox();
         Label prompt = new Label("Assemble your team!");
@@ -34,37 +33,28 @@ public class TeamCreateController {
         javafx.scene.control.TextField regionField = new javafx.scene.control.TextField();
         regionField.setPromptText("enter a region number");
 
-
-
-        Label typePrompt = new Label("Select a primary type: 1 for Grass, 2 for grass, 3 for water");
+        Label typePrompt = new Label("Select a primary type: 1 for Grass, 2 for Fire, 3 for Water");
         javafx.scene.control.TextField typeField = new javafx.scene.control.TextField();
         typeField.setPromptText("enter a type");
 
         Button addButton = new Button("No slot selected");
 
-
-        //slot selection
+        // slot selection
         Button slot1 = new Button("None, select and add");
         slot1.setOnAction(e -> {setSlotSelected(1); addButton.setText("Add to slot 1");});
-
 
         Button slot2 = new Button("None, select and add");
         slot2.setOnAction(e -> {setSlotSelected(2); addButton.setText("Add to slot 2");});
 
-
         Button slot3 = new Button("None, select and add");
-        slot3.setOnAction(e ->{setSlotSelected(3); addButton.setText("Add to slot 3");});
+        slot3.setOnAction(e -> {setSlotSelected(3); addButton.setText("Add to slot 3");});
 
-
-
-        //Add button logic, checks region and type field to be valid, updates the slot buttons, adds to team list
+        // Add button logic
         addButton.setOnAction(e -> {
-
             if (regionField.getText() != null) {
                 try {
                     regionSelected = Integer.parseInt(regionField.getText());
                 } catch (NumberFormatException error) {
-                    // Handle invalid input
                     regionSelected = 0;
                 }
             }
@@ -73,7 +63,6 @@ public class TeamCreateController {
                 try {
                     typeSelected = Integer.parseInt(typeField.getText());
                 } catch (NumberFormatException error) {
-                    // Handle invalid input
                     typeSelected = 0;
                 }
             }
@@ -84,12 +73,8 @@ public class TeamCreateController {
                 case 2 -> slot2.setText(pokemonToAdd.poke_name);
                 case 3 -> slot3.setText(pokemonToAdd.poke_name);
             }
-            team.add(slotSelected-1, pokemonToAdd);
-
-
+            team.add(slotSelected - 1, pokemonToAdd);
         });
-
-
 
         Button saveButton = new Button("Save team and exit");
 
@@ -98,6 +83,22 @@ public class TeamCreateController {
 
             db.newTeam(userId, teamName);
 
+            // save each pokemon to the pokemon table so TableView can display them
+            for (Pokemon p : team) {
+                String type2 = (p.getSecondaryType() != null) ? p.getSecondaryType().name() : "NONE";
+                db.newPokemon(
+                        p.getPoke_id(),
+                        p.getPoke_name(),
+                        p.getPrimaryType().name(),
+                        type2,
+                        p.getBaseHp(),
+                        p.getAttack(),
+                        p.getSp_attack(),
+                        p.getDefense(),
+                        p.getSp_defense()
+                );
+            }
+
             SceneManager.getInstance().navigateTo(SceneType.TRAINER);
         });
 
@@ -105,27 +106,24 @@ public class TeamCreateController {
         root.setSpacing(10);
         root.setPadding(new Insets(20));
 
-        root.getChildren().addAll(prompt,regionPrompt,regionField,typePrompt,typeField,slot1,slot2,slot3,addButton,
-                saveButton);
-
+        root.getChildren().addAll(prompt, regionPrompt, regionField, typePrompt, typeField,
+                slot1, slot2, slot3, addButton, saveButton);
 
         return new Scene(root, 500, 500);
     }
 
-    //create structure for id's
-    //9 rows, 3 columns
+    // 9 rows, 3 columns
     public int[][] pokeList = {
-            {3,9,12}, // Kanto
-            {154,157,160}, // Johto
-            {254,257,260},// Hoenn
-            {389,392,395}, // Sinnoh
-            {497,500,503}, // Unova
-            {652,655,658}, // Kalos
-            {724,727,730}, // Alola
-            {810, 813, 816}, //Galar
-            {908, 911, 914} //Paldea
+            {3,   9,  12}, // Kanto
+            {154, 157, 160}, // Johto
+            {254, 257, 260}, // Hoenn
+            {389, 392, 395}, // Sinnoh
+            {497, 500, 503}, // Unova
+            {652, 655, 658}, // Kalos
+            {724, 727, 730}, // Alola
+            {810, 813, 816}, // Galar
+            {908, 911, 914}  // Paldea
     };
-
 
     public void setPokeList(int r, int c, int input) {
         pokeList[r][c] = input;
@@ -135,19 +133,11 @@ public class TeamCreateController {
         return pokeList[r][c];
     }
 
-
     public Pokemon addByRegion(int region, int inType) {
-
-        //1 is grass, 2 is fire, 3 is water
+        // 1 is grass, 2 is fire, 3 is water
         region -= 1;
         inType -= 1;
-        int idOut = getPokeList(region,inType);
-
+        int idOut = getPokeList(region, inType);
         return PokemonAPIConsume.APIPull(idOut);
     }
-
-
-
-
-    }
-
+}
