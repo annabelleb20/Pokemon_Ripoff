@@ -79,9 +79,31 @@ public class FightController {
         return damage * getTypeEffectiveness(attacker, defender);
     }
 
-    //Todo assemble list of pokemon objects from user data
-    public List<Pokemon> readTeamFromDB() {
+
+    public List<Pokemon> readTeamFromDB(User user) {
         List<Pokemon> teamOut = new ArrayList<>();
+
+        List<String> teamInfo = db.readTeamInfo(user.getId());
+
+        if (teamInfo.isEmpty()){
+            return teamOut;
+        }
+
+        String teamName = teamInfo.get(2);
+        String[] ids = teamName.split(" ");
+
+        for (String idText :ids){
+            try{
+                int pokeId = Integer.parseInt(idText);
+                Pokemon p = PokemonAPIConsume.APIPull(pokeId);
+
+                if (p != null){
+                    teamOut.add(p);
+                }
+            }catch (NumberFormatException e){
+                System.err.println("Invalid Pokemon ID in testName: " + idText);
+            }
+        }
         return teamOut;
     }
 
