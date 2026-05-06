@@ -4,7 +4,10 @@ import javafx.scene.layout.VBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class TableviewDisplayController {
 
@@ -17,10 +20,8 @@ public class TableviewDisplayController {
         TableView<Pokemon> table = new TableView<>();
         ObservableList<Pokemon> data = FXCollections.observableArrayList();
 
-        // initial load
         loadData(data);
 
-        // columns
         TableColumn<Pokemon, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("poke_name"));
 
@@ -33,7 +34,6 @@ public class TableviewDisplayController {
         table.getColumns().addAll(nameCol, typeCol, attackCol);
         table.setItems(data);
 
-        // refresh button
         Button refreshButton = new Button("Refresh Table");
 
         refreshButton.setOnAction(e -> {
@@ -50,20 +50,36 @@ public class TableviewDisplayController {
         return new Scene(root, 600, 400);
     }
 
-    // helper method to avoid duplicate DB code
     private void loadData(ObservableList<Pokemon> data) {
+
+        String sql = "SELECT * FROM pokemon";
+
         try {
-            var conn = DatabaseManager.getInstance().getConnection();
-            var stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM pokemon");
+            Connection conn = DatabaseManager.getInstance().getConnection();
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
+
                 Pokemon p = new Pokemon();
+
                 p.setPoke_name(rs.getString("pName"));
                 p.setAttack(rs.getInt("attack"));
-                p.setPrimaryType(Poke_Type.valueOf(rs.getString("type")));
+
+                // safer enum handling (prevents crash if DB has bad value)
+                String type = rs.getString("type");
+                try {
+                    p.setPrimaryType(Poke_Type.valueOf(type));
+                } catch (Exception e) {
+                    p.setPrimaryType(Poke_Type.NORMAL); // fallback (change if needed)
+                }
+
                 data.add(p);
             }
+
+            rs.close();
+            stmt.close();
 
         } catch (Exception e) {
             e.printStackTrace();
