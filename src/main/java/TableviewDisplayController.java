@@ -17,6 +17,41 @@ public class TableviewDisplayController {
         TableView<Pokemon> table = new TableView<>();
         ObservableList<Pokemon> data = FXCollections.observableArrayList();
 
+        // initial load
+        loadData(data);
+
+        // columns
+        TableColumn<Pokemon, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("poke_name"));
+
+        TableColumn<Pokemon, String> typeCol = new TableColumn<>("Type");
+        typeCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("primaryType"));
+
+        TableColumn<Pokemon, Integer> attackCol = new TableColumn<>("Attack");
+        attackCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("attack"));
+
+        table.getColumns().addAll(nameCol, typeCol, attackCol);
+        table.setItems(data);
+
+        // refresh button
+        Button refreshButton = new Button("Refresh Table");
+
+        refreshButton.setOnAction(e -> {
+            data.clear();
+            loadData(data);
+        });
+
+        root.getChildren().addAll(
+                new Label("Pokemon TableView"),
+                refreshButton,
+                table
+        );
+
+        return new Scene(root, 600, 400);
+    }
+
+    // helper method to avoid duplicate DB code
+    private void loadData(ObservableList<Pokemon> data) {
         try {
             var conn = DatabaseManager.getInstance().getConnection();
             var stmt = conn.createStatement();
@@ -33,21 +68,5 @@ public class TableviewDisplayController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        TableColumn<Pokemon, String> nameCol = new TableColumn<>("Name");
-        nameCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("poke_name"));
-
-        TableColumn<Pokemon, String> typeCol = new TableColumn<>("Type");
-        typeCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("primaryType"));
-
-        TableColumn<Pokemon, Integer> attackCol = new TableColumn<>("Attack");
-        attackCol.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("attack"));
-
-        table.getColumns().addAll(nameCol, typeCol, attackCol);
-        table.setItems(data);
-
-        root.getChildren().addAll(new Label("Pokemon TableView"), table);
-
-        return new Scene(root, 600, 400);
     }
 }

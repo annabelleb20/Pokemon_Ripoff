@@ -16,6 +16,7 @@ public class trainerController {
 
         Button createEditTeam = new Button("Create/Edit Team");
         Button exportTeam = new Button("Export Team");
+        Button viewTable = new Button("View Pokemon Table");
         Button logOut = new Button("Log out");
 
         createEditTeam.setOnAction(e-> SceneManager.getInstance().navigateTo(SceneType.TEAM_BUILD));
@@ -24,7 +25,11 @@ public class trainerController {
 
         logOut.setOnAction(e-> SceneManager.getInstance().navigateTo(SceneType.MAIN));
 
-        root.getChildren().addAll(title,createEditTeam,exportTeam,logOut);
+        viewTable.setOnAction(e ->
+                SceneManager.getInstance().navigateTo(SceneType.TABLE_VIEW)
+        );
+
+        root.getChildren().addAll(title, createEditTeam, exportTeam, viewTable, logOut);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(12);
         root.setPadding(new Insets(20));
