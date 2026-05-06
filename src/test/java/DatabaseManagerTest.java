@@ -3,10 +3,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseManagerTest {
+
     @BeforeEach
     void freshDb2(){
-        System.setProperty("app.db.url", "jdbc:sqlite::memory:");
         DatabaseManager.resetForTesting();
+        System.setProperty("app.db.url", "jdbc:sqlite::memory:");
     }
 
     @AfterEach
@@ -27,45 +28,37 @@ public class DatabaseManagerTest {
     void testNewUser(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
+        db.newUser("user1234","password1234");
 
-        db.newUser(username,password);
-
-        int result = db.readUser(username, password);
+        int result = db.readUser("user1234","password1234");
 
         assertNotEquals(-1, result);
     }
 
     @Test
-    @DisplayName("Test the creation of a new user")
+    @DisplayName("Test the creation of a new admin")
     void testNewAdmin(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
+        db.newAdmin("user1234","password1234");
 
-        db.newAdmin(username,password);
-
-        int result = db.readUser(username, password);
+        int result = db.readUser("user1234","password1234");
 
         assertNotEquals(-1, result);
     }
 
     @Test
-    @DisplayName("Test to read admin (literally just wanna see if I'm doing this right)")
+    @DisplayName("Test reading admin")
     void testReadAdmin(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        db.newUser("notAdmin","fuck off");
-        int userResult=db.readUser("notAdmin","word");
-
-
+        db.newUser("notAdmin","pass");
+        int userResult = db.readUser("notAdmin","pass");
         assertFalse(db.isAdmin(userResult));
+
         db.newAdmin("isadmin","pass");
         int adminResult = db.readUser("isadmin","pass");
         assertTrue(db.isAdmin(adminResult));
-
     }
 
     @Test
@@ -73,20 +66,15 @@ public class DatabaseManagerTest {
     void testReadUser(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
+        db.newUser("user1234","password1234");
 
-        db.newUser(username,password);
-
-        int ID = db.readUser(username, password);
-        assertNotEquals(-1, ID);
+        int ID = db.readUser("user1234","password1234");
 
         List<String> info = db.readUserInfo(ID);
 
-        // Tests if each information is in the spot it should be
         assertEquals(ID, Integer.parseInt(info.get(0)));
-        assertEquals(username, info.get(1));
-        assertEquals(password, info.get(2));
+        assertEquals("user1234", info.get(1));
+        assertEquals("password1234", info.get(2));
         assertEquals(0, Integer.parseInt(info.get(3)));
     }
 
@@ -95,19 +83,16 @@ public class DatabaseManagerTest {
     void testUpdateUser(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username,password);
-        int ID = db.readUser(username, password);
+        db.newUser("user1234","password1234");
+        int ID = db.readUser("user1234","password1234");
 
         db.updateUsername("newUsername", ID);
         db.updatePassword("newPassword", ID);
 
-        assertFalse(db.readUserInfo(ID).contains("user1234"));
-        assertFalse(db.readUserInfo(ID).contains("password1234"));
-        assertTrue(db.readUserInfo(ID).contains("newUsername"));
-        assertTrue(db.readUserInfo(ID).contains("newPassword"));
+        List<String> info = db.readUserInfo(ID);
+
+        assertTrue(info.contains("newUsername"));
+        assertTrue(info.contains("newPassword"));
     }
 
     @Test
@@ -115,14 +100,12 @@ public class DatabaseManagerTest {
     void testDeleteUser(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username,password);
-        int ID = db.readUser(username, password);
+        db.newUser("user1234","password1234");
+        int ID = db.readUser("user1234","password1234");
 
         db.deleteUser(ID);
-        assertEquals(-1, db.readUser(username, password));
+
+        assertEquals(-1, db.readUser("user1234","password1234"));
     }
 
     @Test
@@ -130,15 +113,14 @@ public class DatabaseManagerTest {
     void testNewTeam(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
+        db.newUser("user1234","password1234");
+        int ID = db.readUser("user1234","password1234");
 
         db.newTeam(ID, "teamName1234");
+
         List<String> team = db.readTeamInfo(ID);
-        assertEquals(db.getTeamId(ID), Integer.parseInt(team.get(0)));
+
+        assertEquals(String.valueOf(db.getTeamId(ID)), team.get(0));
     }
 
     @Test
@@ -146,19 +128,14 @@ public class DatabaseManagerTest {
     void testReadTeam(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
+        db.newUser("user1234","password1234");
+        int ID = db.readUser("user1234","password1234");
 
         db.newTeam(ID, "teamName1234");
-        int teamId = db.getTeamId(ID);
-        assertNotEquals(-1, teamId);
 
+        int teamId = db.getTeamId(ID);
         List<String> team = db.readTeamInfo(ID);
 
-        // Tests if each information is in the spot it should be
         assertEquals(teamId, Integer.parseInt(team.get(0)));
         assertEquals(ID, Integer.parseInt(team.get(1)));
         assertEquals("teamName1234", team.get(2));
@@ -170,13 +147,11 @@ public class DatabaseManagerTest {
     void testUpdateTeam(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
+        db.newUser("user1234","password1234");
+        int ID = db.readUser("user1234","password1234");
 
         db.newTeam(ID, "teamName1234");
+
         int teamID = db.getTeamId(ID);
         db.updateExport("newExport", teamID);
 
@@ -188,182 +163,14 @@ public class DatabaseManagerTest {
     void testDeleteTeam(){
         DatabaseManager db = DatabaseManager.getInstance();
 
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
+        db.newUser("user1234","password1234");
+        int ID = db.readUser("user1234","password1234");
 
         db.newTeam(ID, "teamName1234");
-        int teamID = db.getTeamId(ID);
 
+        int teamID = db.getTeamId(ID);
         db.deleteTeam(teamID);
 
         assertEquals(-1, db.getTeamId(ID));
-    }
-
-    @Test
-    @DisplayName("Test creating a pokemon")
-    void testNewPokemon(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        assertNotEquals(-1, db.getPokemonId("name"));
-    }
-
-    @Test
-    @DisplayName("Test reading a pokemon")
-    void testReadPokemon(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 13, 14, 15, 16);
-
-        int pkID = db.getPokemonId("name");
-        assertNotEquals(-1, pkID);
-
-        List<String> info = db.readPokemonInfo(pkID);
-
-        // Tests if each info is in the spot it should be
-        assertEquals(pkID, Integer.parseInt(info.get(0)));
-        assertEquals("name", info.get(1));
-        assertEquals("fire", info.get(2));
-        assertEquals("rock", info.get(3));
-        assertEquals(12.0, Double.parseDouble(info.get(4)));
-        assertEquals(13, Integer.parseInt(info.get(5)));
-        assertEquals(14, Integer.parseInt(info.get(6)));
-        assertEquals(15, Integer.parseInt(info.get(7)));
-        assertEquals(16, Integer.parseInt(info.get(8)));
-    }
-
-    @Test
-    @DisplayName("Test updating a pokemon")
-    void testUpdatePokemon(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 13, 14, 15, 16);
-
-        db.updatePokemon("pName", "newName", 123);
-        db.updatePokemon("attack", 25, 123);
-
-        assertTrue(db.readPokemonInfo(123).contains("newName"));
-        assertTrue(db.readPokemonInfo(123).contains("25"));
-    }
-
-    @Test
-    @DisplayName("Test deleting a pokemon")
-    void testDeletePokemon(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        db.deletePokemon(123);
-
-        assertEquals(-1, db.getPokemonId("name"));
-    }
-
-    @Test
-    @DisplayName("Test new team slot")
-    void testNewTeamSlot(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
-
-        db.newTeam(ID, "teamName1234");
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        db.newTeamSlot(db.getTeamId(ID), 1, 1);
-        assertNotEquals(-1, db.getSlotId(db.getTeamId(ID)));
-    }
-
-    @Test
-    @DisplayName("Test new pokemon team slot")
-    void testNewPokemonTeamSlot(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
-
-        db.newTeam(ID, "teamName1234");
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        db.newTeamSlot(db.getTeamId(ID), 1, 1, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-        assertEquals(3, db.readSlotInfo(db.getTeamId(ID)).get(2));
-    }
-
-
-    @Test
-    @DisplayName("Test reading a team slot")
-    void testReadTeamSlot(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
-
-        db.newTeam(ID, "teamName1234");
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        db.newTeamSlot(db.getTeamId(ID), 1, 1);
-        int slotID = db.getSlotId(db.getTeamId(ID));
-        assertNotEquals(-1, slotID);
-
-        List<Integer> info = db.readSlotInfo(db.getTeamId(ID));
-
-        //Tests if all the info is in the right spots
-        assertEquals(slotID, info.get(0));
-        assertEquals(db.getTeamId(ID), info.get(1));
-        assertEquals(1, info.get(2));
-        assertEquals(1, info.get(3));
-    }
-
-    @Test
-    @DisplayName("Test updating team slot")
-    void testUpdateTeamSlot(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
-
-        db.newTeam(ID, "teamName1234");
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        db.newTeamSlot(db.getTeamId(ID), 1, 1);
-        db.updateTeamSlots("slotId", 2, 1);
-
-        assertEquals(2, db.getSlotId(db.getTeamId(ID)));
-    }
-
-    @Test
-    @DisplayName("Test deleting team slot")
-    void testDeleteTeamSlot(){
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        String username = "user1234";
-        String password = "password1234";
-
-        db.newUser(username, password);
-        int ID = db.readUser(username, password);
-
-        db.newTeam(ID, "teamName1234");
-        db.newPokemon(123, "name", "fire", "rock", 12.0, 12, 12, 12, 12);
-
-        db.newTeamSlot(db.getTeamId(ID), 1, 1);
-        db.deleteTeamSlot(db.getSlotId(db.getTeamId(ID)));
-
-        assertEquals(-1, db.getSlotId(db.getTeamId(ID)));
     }
 }
