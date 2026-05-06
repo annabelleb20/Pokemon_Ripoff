@@ -14,6 +14,10 @@ import java.util.ArrayList;
 
 public class TeamCreateController {
 
+
+    int userId = SceneManager.getInstance().getCurrentUserId();
+    DatabaseManager db = DatabaseManager.getInstance();
+
     private int regionSelected;
     private int typeSelected;
     int slotSelected;
@@ -88,8 +92,12 @@ public class TeamCreateController {
 
 
         Button saveButton = new Button("Save team and exit");
-        //todo: attach to user info
+
         saveButton.setOnAction(e -> {
+            String teamName = team.get(0).getPoke_id() + " " + team.get(1).getPoke_id() + " " + team.get(2).getPoke_id();
+
+            db.newTeam(userId, teamName);
+
             SceneManager.getInstance().navigateTo(SceneType.TRAINER);
         });
 
@@ -134,6 +142,7 @@ public class TeamCreateController {
         region -= 1;
         inType -= 1;
         int idOut = getPokeList(region,inType);
+
         return PokemonAPIConsume.APIPull(idOut);
     }
 

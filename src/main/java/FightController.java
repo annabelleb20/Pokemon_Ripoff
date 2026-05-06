@@ -1,9 +1,12 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import java.util.EnumMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class FightController {
     DatabaseManager db = DatabaseManager.getInstance();
@@ -16,12 +19,14 @@ public class FightController {
     public Scene buildScene(){
         Label title = new Label(user1.getName() + " vs " + user2.getName());
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        //Label fightStatus
+        Button fightButton = new Button("FIGHT!!!!");
 
         VBox layout = new VBox(12, title);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(16));
+        layout.getChildren().addAll(title, fightButton);
         return new Scene(layout, 500, 400);
-
 
 
     }
@@ -73,4 +78,11 @@ public class FightController {
 
         return damage * getTypeEffectiveness(attacker, defender);
     }
+
+    //Todo assemble list of pokemon objects from user data
+    public List<Pokemon> readTeamFromDB() {
+        List<Pokemon> teamOut = new ArrayList<>();
+        return teamOut;
+    }
+
 }
