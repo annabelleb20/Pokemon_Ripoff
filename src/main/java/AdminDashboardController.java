@@ -77,7 +77,7 @@ public class AdminDashboardController {
         } else{
             List<User> users = new ArrayList<>(u);
             AppData.getInstance().setDuel(users);
-            SceneManager.getInstance().navigateFresh(SceneType.FIGHT);
+            SceneManager.getInstance().navigateTo(SceneType.FIGHT);
         }
     }
 }

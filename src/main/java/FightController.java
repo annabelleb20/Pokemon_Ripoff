@@ -25,7 +25,7 @@ public class FightController {
         VBox layout = new VBox(12, title);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(16));
-        layout.getChildren().addAll(title, fightButton);
+        layout.getChildren().addAll(fightButton);
         return new Scene(layout, 500, 400);
 
 
