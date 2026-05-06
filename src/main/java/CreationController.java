@@ -25,27 +25,30 @@ public class CreationController {
         Button signup = new Button("Sign up");
         Button login = new Button("Login");
 
-        signup.setOnAction(e-> {
-            //slight duplicate measure. it's kinda a security hazard, but I don't think we need to worry about it
-            if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty()){
-                prompt.setText("invalid username or password");
-            }else {
-                int userid = -1;
-                userid = db.readUser(usernameField.getText(), passwordField.getText());
-                if (userid!=-1){
-                    prompt.setText("Sorry, that is already in use. Please try another username");
-                }else {
-                    prompt.setText("Sign up successful. Welcome " + usernameField.getText());
-                    db.newUser(usernameField.getText(), passwordField.getText());
-                    signup.setText("Continue");
+        signup.setOnAction(e -> {
+            String enteredUsername = usernameField.getText().trim();
+            String enteredPassword = passwordField.getText().trim();
 
-                    //todo: make this lead to the next scene
-                    signup.setOnAction(event ->{
-                            prompt.setText("Please enter a username and a password");
-                            SceneManager.getInstance().navigateTo(SceneType.MAIN);
-                    });
-                }
+            if (enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
+                prompt.setText("Invalid username or password.");
+                return;
             }
+
+            boolean usernameExists = db.getUsers().stream()
+                    .anyMatch(user -> user.getName().equalsIgnoreCase(enteredUsername));
+
+            if (usernameExists) {
+                prompt.setText("Sorry, that username is already in use.");
+                return;
+            }
+
+            db.newUser(enteredUsername, enteredPassword);
+            prompt.setText("Sign up successful. Welcome " + enteredUsername);
+
+            signup.setText("Continue");
+            signup.setOnAction(event ->
+                    SceneManager.getInstance().navigateFresh(SceneType.LOGIN)
+            );
         });
 
         login.setOnAction(e->SceneManager.getInstance().navigateTo(SceneType.LOGIN));
