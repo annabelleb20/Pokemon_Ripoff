@@ -6,8 +6,8 @@ public class DatabaseManagerTest {
 
     @BeforeEach
     void freshDb2(){
-        DatabaseManager.resetForTesting();
         System.setProperty("app.db.url", "jdbc:sqlite::memory:");
+        DatabaseManager.resetForTesting();
     }
 
     @AfterEach
