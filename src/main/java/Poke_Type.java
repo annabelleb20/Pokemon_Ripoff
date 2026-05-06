@@ -1,9 +1,9 @@
 public enum Poke_Type {
     NORMAL,
-    WATER,
-    GRASS,
     FIRE,
+    WATER,
     ELECTRIC,
+    GRASS,
     ICE,
     FIGHTING,
     POISON,
