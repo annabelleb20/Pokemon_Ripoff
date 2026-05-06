@@ -117,50 +117,7 @@ public class SceneFactory {
 
     public static Scene buildTableViewScene(Stage stage){
 
-        VBox root = new VBox();
-        root.setAlignment(Pos.CENTER);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
-
-
-        TableView<Pokemon> table = new TableView<>();
-        ObservableList<Pokemon> data = FXCollections.observableArrayList();
-
-        try {
-            var conn = DatabaseManager.getInstance().getConnection();
-            var stmt = conn.createStatement();
-
-            ResultSet rs = stmt.executeQuery("SELECT * FROM pokemon");
-
-            while (rs.next()) {
-                Pokemon p = new Pokemon();
-
-                p.setPoke_name(rs.getString("pName"));
-                p.setAttack(rs.getInt("attack"));
-                p.setPrimaryType(Poke_Type.valueOf(rs.getString("type")));
-
-                data.add(p);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Label title = new Label("Pokemon TableView");
-        TableColumn<Pokemon, String> nameCol = new TableColumn<>("Name");
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("poke_name"));
-        TableColumn<Pokemon, String> typeCol = new TableColumn<>("Type");
-        typeCol.setCellValueFactory(new PropertyValueFactory<>("primaryType"));
-
-        TableColumn<Pokemon, Integer> attackCol = new TableColumn<>("Attack");
-        attackCol.setCellValueFactory(new PropertyValueFactory<>("attack"));
-        table.getColumns().addAll(nameCol, typeCol, attackCol);
-
-        table.setItems(data);
-        root.getChildren().addAll(title, table);
-
-        return new Scene(root, 600, 400);
-    }
+        return new TableviewDisplayController().buildScene(stage);    }
 
 
 }
